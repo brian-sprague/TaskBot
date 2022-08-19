@@ -10,6 +10,7 @@ const session = require('express-session');
 const {google} = require('googleapis');
 const { GoogleAuth } = require('google-auth-library');
 const tasks = google.tasks('v1');
+const homeUrl = (process.env._ && process.env._.indexOf("heroku") !== -1) ? "https://slack-task-bot-server.herokuapp.com" : "http://localhost:3000";
 let http = require('http');
 let fs = require('fs');
 const axios = require('axios');
@@ -68,7 +69,7 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 passport.use(new GoogleStrategy({
     clientID: GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/auth/google/callback"
+    callbackURL: homeUrl + "/auth/google/callback"
   },
   function(accessToken, refreshToken, profile, done) {
       userProfile=profile;
@@ -80,7 +81,7 @@ passport.use(new GoogleStrategy({
 app.post('/auth', (req,res) => {
   let data = {
     response_type: 'in_channel',
-    text: 'http://localhost:3000 '
+    text: homeUrl
   };
   res.json(data);
 });
